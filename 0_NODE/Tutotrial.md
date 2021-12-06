@@ -27,9 +27,9 @@ Download: <https://nodejs.org/en/>
     res.end()
     }).listen(8000)
     ```
-6. So far nothing has happend since we haven't tell Node.js to start the server. In order to do it: i) open the terminal/console app from your Operative System and ii) Run the comand:
+6. So far nothing has happend since we haven't told Node.js to start the server. In order to do it: i) open the terminal/console app from your Operative System and ii) Run the comand:
     ```console
     node path/to/your/SimpleServer.js
     ```
-Now you can see that the console is in kind of frozen state, but it is actually working.
+- Now you can see that the console is in kind of frozen state, but it is actually working.
 7. In order to see what is going on, open your favorite browser and type in the url bar: http://localhost:8000/. Be sure that the ending point of the url is :8000, since that is teh port we have asasigned to listen and echo requests.
