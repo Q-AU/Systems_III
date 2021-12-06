@@ -17,9 +17,11 @@ Download: <https://nodejs.org/en/>
 2. Inside the folder create an empty document [name does not matter] SimpleServer.js [the extension is important]
 3. Open SimpleServer.js whit your favorite IDE
 4. In the first line of the document simply write
-    > var http =require('http');
+    ```javascript
+     var http =require('http');
+    ```
 5. Create an object from the module we are calling in the first line 
-    >```javascript
+    ```javascript
     http.createServer((req,res)=>{
     res.write("This line has been instantiated from the server...")
     res.end()
