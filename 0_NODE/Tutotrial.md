@@ -19,8 +19,9 @@ Download: <https://nodejs.org/en/>
 4. In the first line of the document simply write
     > var http =require('http');
 5. Create an object from the module we are calling in the first line 
-    > http.createServer((req,res)=>{
+    >```javascript
+    http.createServer((req,res)=>{
     res.write("This line has been instantiated from the server...")
     res.end()
     }).listen(8000)
-
+    ```
