@@ -19,7 +19,7 @@ Download: <https://nodejs.org/en/>
 2. Inside the folder create an empty document [name does not matter] SimpleServer.js [the extension is important]
 3. Open SimpleServer.js whit your favorite IDE
 4. In the first line of the document simply write
-> var http =require('http');
+    > var http =require('http');
 
 
 
