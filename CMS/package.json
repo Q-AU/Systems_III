@@ -1,0 +1,30 @@
+{
+  "name": "cms",
+  "version": "1.0.0",
+  "description": "Replication of PHP project using JS :)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Q-AU/Systems_III.git"
+  },
+  "keywords": [
+    "node",
+    "js",
+    "express",
+    "react"
+  ],
+  "author": "Q-AU",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Q-AU/Systems_III/issues"
+  },
+  "homepage": "https://github.com/Q-AU/Systems_III#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1"
+  }
+}
