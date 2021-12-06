@@ -13,7 +13,7 @@ Source: <https://www.codecademy.com/articles/what-is-node>
 Download: <https://nodejs.org/en/>
 
 ## Creating a simple server
-1. Create a folder named Servers
+1. Create a folder named Servers [Any place in your computer, just remember where]
 2. Inside the folder create an empty document [name does not matter] SimpleServer.js [the extension is important]
 3. Open SimpleServer.js whit your favorite IDE
 4. In the first line of the document simply write
