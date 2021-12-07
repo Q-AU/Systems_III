@@ -53,19 +53,19 @@ Download: <https://nodejs.org/en/>
 - if you are in OSX, try this instead:
   ```console
     sudo npm install -g --force nodemon
-    ```
+  ```
 10. If everything went well, now we have next to our SimpleServer.js file 3 new items: i) a folder named: node_modules, annd ii) two files, namely: packege-lock.json and package.json. 
 11. For this step, instead of running our SimpleServer.js using the code from step 6, let's do it like this. 
   ```console
     nodemon path/to/your/SimpleServer.js
-    ```
+  ```
 - Try to change something to see that the server is refreshed everytime there is a change  in the code.
 - Using nodemon during developing time might save you a lot of time :)
 - Finally, for this simple server, let's handle requests from the client.
 12. To keep things simple and using in-built functions lets use the second parameter of the server (req)
   ```javascript
     res.write("\nUser is in: " + req.url)
-    ```
+  ```
 - Try to put this URL in the browser http://localhost:8000/Novice
 - As you can observe,now we are able two handle routes in case our web app has different pages.
 13. If you read the documentation you will see that there are ways to handle also parameters from an URL request anomg many other things, and this will get a little bit more complicated the more we deep down using this apporach. But let's not do it like this, instead let's take advantage of Node and it's modules to make thing easier for us. 
