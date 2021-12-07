@@ -54,6 +54,16 @@ Download: <https://nodejs.org/en/>
   ```console
     sudo npm install -g --force nodemon
   ```
+- if you are in Win, try opening a PowerShell console as Admin and type the following commands:
+type these commands:
+  ```console
+  1)Set-ExecutionPolicy RemoteSigned
+  2)Set-ExecutionPolicy Unrestricted
+  3)Get-ExecutionPolicy
+  4)Exit
+```
+maybe yo
+
 10. If everything went well, now we have next to our SimpleServer.js file 3 new items: i) a folder named: node_modules, annd ii) two files, namely: packege-lock.json and package.json. 
 11. For this step, instead of running our SimpleServer.js using the code from step 6, let's do it like this. 
   ```console
