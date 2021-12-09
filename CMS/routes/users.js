@@ -2,7 +2,7 @@ const express= require("express")
 const session = require("express-session")
 
 const users = express.Router();
-const DB=require('../DB')
+const DB=require('../DB/dbConn.js')
 
 //users.set('trust proxy', 1) // trust first proxy
 users.use(session({
