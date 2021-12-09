@@ -5,7 +5,7 @@ var  conn = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS, 
-    database: 'qcodeigniter',
+    database: 'Qcodeigniter',
 
   })
 
@@ -29,24 +29,14 @@ dataPool.oneNovica=(id)=>{
   })
 }
 
-dataPool.AuthUser=(username, password)=>
+dataPool.AuthUser=(username)=>
 {
   return new Promise ((resolve, reject)=>{
-    conn.query('SELECT * FROM user_login WHERE username = ? AND password = ?', [username, password], (err,res, fileds)=>{
+    conn.query('SELECT * FROM user_login WHERE user_name = ?', username, (err,res, fields)=>{
       if(err){return reject(err)}
       return resolve(res)
     })
   })  
-		conn.query('SELECT * FROM user_login WHERE username = ? AND password = ?', [username, password], (error, results, fields) => {
-			if (results.length > 0) {
-				req.session.loggedin = true;
-				req.session.username = username;
-				res.redirect('/home');
-			} else {
-				res.send('Incorrect Username and/or Password!');
-			}			
-			res.end();
-		});
 	
 }
 
