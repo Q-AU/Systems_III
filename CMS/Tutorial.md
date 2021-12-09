@@ -1,3 +1,3 @@
 # Basic CMS
 
-![Alt text](./assets/poster.jpg?raw=true "Poster")
+  <img src="./assets/poster.jpg" width="350" alt="accessibility text">
