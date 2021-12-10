@@ -251,14 +251,44 @@ node path/to/your/index.js
 
 ### The DB connection and the CRUD
 
-1. In the root of our CMS project, create a folder DB and name it DB (name doesnt matter but just recall it)
-2. Create an empty file in DB and named it **DBConn.js**
-3. Run the following command in the console
+1. In the root of our CMS project, create a folder and name it DB.
+
+2. Create an empty file in DB folder and named it **dbConn.js**
+
+3. Install the following dependencies:
 
 ```console
-    npm install mysql2 dotenv
+npm install mysql2 dotenv
 ```
 
-- The first one is a dependency that will help us to deal with the connection with the data base and the second one to keep secret our data base information
+- The first one (mysql2) is a dependency that will help us to deal with the connection with the data base and the second one to keep secret our data base information
 
-4. In **DBConn.js** import express, justa as in step **5** of **Creating a NodeJs + Express.js server**
+4. In **DBConn.js**, import *ExpresJS*, justa as in step **5** of **The server**
+
+6. Then define a variable tha will hold the connection:
+
+```javascript
+const  conn = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS, 
+    database: 'Qcodeigniter',
+  })
+```
+
+- In your case the value of the *database* key must contain excactly the same name as your database.
+- In hte next step we will define the *host*, *user* and *password*.
+
+7. In the CMC folder, create a file a name it *.env*, open it and write:
+
+```text
+DB_HOST=the address of your database
+DB_USER=the user from your data base
+DB_PASS=your password
+```
+
+- As we want to keep this information privatley and not to expose it in your repository, let's also create an *.gitignore* file in CMS folder and simply put
+
+```text
+.env
+```

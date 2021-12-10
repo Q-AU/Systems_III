@@ -1,6 +1,6 @@
 var mysql = require('mysql2')
 
-var  conn = mysql.createConnection({
+const  conn = mysql.createConnection({
    
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
