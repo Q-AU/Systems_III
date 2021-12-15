@@ -127,17 +127,19 @@ res.write("\nUser is in: " + req.url)
 
 ### Creating a NodeJs + Express.js server
 
-We will learn about *ExpressJS* by building something. In this case, We will replicate the functionality of your *codeigniter project*. So, In order to do this I have subdivided this next part of the tutorial in 3 pieces, namely:
+We will learn about *ExpressJS* by building something. In this case, We will replicate the functionality of your *codeigniter project*. So, In order to do this I have subdivided this next part of the tutorial in 4 pieces, namely:
 
 - [The server](#the-server)
 - [The routes](#the-routes)
-- [The DB connection + the CRUD](#the-DB-connection-and-the-crud)
+- [The DB](#the-db)
+- [The CRUD](#the-crud)
 
 Be aware that you have to do all of them in order.
 
 ### The server
 
 1. Create a folder and name it *CMS* (short for Content Managment System)
+
 2. Navigate inside the folder and run the command
 
 ```console
@@ -241,7 +243,7 @@ app.use('/novice', novice);
 
 ```console
 node path/to/your/index.js
-```
+```ºº
 
 9. In the browser visit *http://ADDRESS:5000/*
 
@@ -249,7 +251,7 @@ node path/to/your/index.js
 - The next step in this tutorial consists in consuming the information from the DB you created in *codeigniter project*. So every time an user visits an specific *endpoint*, for instace, http://ADDRESS:5000/novice, we get the news from the DB.
 - The idea  for next steps is: i) to stablish aconnection with the DB and then ii) create our own CRUD opperations.
 
-### The DB connection and the CRUD
+### The DB
 
 1. In the root of our CMS project, create a folder and name it DB.
 
@@ -274,12 +276,22 @@ const  conn = mysql.createConnection({
     password: process.env.DB_PASS, 
     database: 'Qcodeigniter',
   })
+
+ conn.connect((err) => {
+      if(err){
+          console.log("ERROR: " + err.message);
+          return;    
+      }
+      console.log('Connection established');
+    })
+  
 ```
 
 - In your case the value of the *database* key must contain excactly the same name as your database.
-- In hte next step we will define the *host*, *user* and *password*.
+- In the next step we will define the *host*, *user* and *password*.
+- Observe that provisonally I have put a block of code to check if the dependency managed to get connected to the dababase, for now let's just save.
 
-7. In the CMC folder, create a file a name it *.env*, open it and write:
+7. In the CMS folder, create a file a name it *.env*, open it and write:
 
 ```text
 DB_HOST=the address of your database
@@ -292,3 +304,243 @@ DB_PASS=your password
 ```text
 .env
 ```
+
+8. Finally to test if it works, go to  **index.js** and add this line after the line where you imported *ExpressJS*:
+
+```javascript
+//Basic packages
+const express = require('express')
+require('dotenv').config()
+```
+
+9. Run the code as ussuall with *node index.js*
+-if everything ok, we should be able to see the message in the console *Connection established*
+-if not, check each step and be sure that your are using the right credential and configurations, and have imported all requiered dependencies.
+
+### The CRUD
+For this part it is important that you understand the logic of the server and how this interacts with the routes and the database.A technique to do this is to read the code and sketch app flow.
+So far we have learned how to create a server that is listening for incoming request, how to create a route to handle requests on an specific endpoint and lastly how to stablish a connection with the database. 
+
+Now it's time to expand our application and write the code for Consulting, Reading, Updating and Deleting data from our database.
+
+1. In **dbConn.js** add the piece of code to handle the CRUD:
+```javascript
+let dataPool={}
+  
+dataPool.allNovice=()=>{
+  return new Promise ((resolve, reject)=>{
+    conn.query(`SELECT * FROM news`, (err,res)=>{
+      if(err){return reject(err)}
+      return resolve(res)
+    })
+  })
+}
+
+dataPool.oneNovica=(id)=>{
+  return new Promise ((resolve, reject)=>{
+    conn.query(`SELECT * FROM news WHERE id = ?`, id, (err,res)=>{
+      if(err){return reject(err)}
+      return resolve(res)
+    })
+  })
+}
+
+dataPool.creteNovica=(title,slug,text)=>{
+  return new Promise ((resolve, reject)=>{
+    conn.query(`INSERT INTO news (title,slug,text) VALUES (?,?,?)`, [title, slug, text], (err,res)=>{
+      if(err){return reject(err)}
+      return resolve(res)
+    })
+  })
+}
+
+```
+
+- Note that I have created a variable of type object that will store the data returned after every query.
+- The returned data is callback from a given function. In this case the function is returning a *[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)*.
+- As you may noticed, the *Promise* is a function that will return either an error if the request failed or a resloution if data query was fullfiled.
+- What is the data that needs to be resolved or return as error? The one we are requestin in the *conn.query()*
+- Data in between quotes looks familiar? It's because this is the SQL instruction that you learned how to use some lab session behind. 
+- To keep things short I have also implemented a request for a single new *oneNovica* that it's pretty similar to the first function but I have included and identifier to overload the request.
+- The last function *createNovica* follows a similar structure to *oneNoica* but receives 3 parameters instead. This is because we defined our database to autoincrement the id counter everytime a new article is inserted. 
+- Analyse previouse code and keep it in mind just in case you need to implement something similar later on ;)
+2. Add the queries related with the user loging/registration
+```javascript
+dataPool.AuthUser=(username)=>
+{
+  return new Promise ((resolve, reject)=>{
+    conn.query('SELECT * FROM user_login WHERE user_name = ?', username, (err,res, fields)=>{
+      if(err){return reject(err)}
+      return resolve(res)
+    })
+  })  
+	
+}
+
+dataPool.AddUser=(username,email,password)=>{
+  return new Promise ((resolve, reject)=>{
+    conn.query(`INSERT INTO user_login (user_name,user_email,user_password) VALUES (?,?,?)`, [username, email, password], (err,res)=>{
+      if(err){return reject(err)}
+      return resolve(res)
+    })
+  })
+}
+```
+- In some sense they follow the same formula as the previous ones for news but in this case they handle data associated with the user.
+3. Open **novice.js** and repleace the all previous code for the following:
+
+```javascript
+const express= require("express")
+const novice = express.Router();
+const DB=require('../DB/dbConn.js')
+
+//Gets all the news in the DB 
+novice.get('/', async (req,res, next)=>{
+    try{
+        var queryResult=await DB.allNovice();
+        res.json(queryResult)
+    }
+    catch(err){
+        console.log(err)
+        res.sendStatus(500)
+    }
+})
+
+//Gets one new based on the id 
+ novice.get('/:id', async (req,res, next)=>{
+    try{
+        var queryResult=await DB.oneNovica(req.params.id)
+        res.json(queryResult)
+    }
+    catch(err){
+        console.log(err)
+        res.sendStatus(500)
+    }
+}) 
+
+//Inserts one new to the database
+novice.post('/', async (req,res, next)=>{
+        
+  let title = req.body.title
+  let slug = req.body.slug
+  let text = req.body.text
+
+    var isAcompleteNovica=title && slug && text
+    if (isAcompleteNovica)
+    {
+        try{
+            var queryResult=await DB.creteNovica(title,slug,text)
+            if (queryResult.affectedRows) {
+                console.log("New article added!!")
+              }
+        }
+        catch(err){
+            console.log(err)
+            res.sendStatus(500)
+        }    
+    }  
+    else
+    {
+     console.log("A field is empty!!")
+    }
+    res.end()
+
+  
+}) 
+module.exports=novice
+```
+- Observe than the first two routes are using get and the last one the post method. I hope you still rremember your previous lab sessions :)
+- All the request need to be revised before invoke the methods we created to consult the database.
+- try and catch are gonna help us in this case break the application if something goes worng during running time. Let's do the proper for users.
+4. Create a new file  in **routes** folder and name it **users.js** then copy and paste the following code:
+```javascript
+const express= require("express")
+const users = express.Router();
+const DB=require('../DB/dbConn.js')
+
+//Checks if user submited both fields, if user exist and if the combiation of user and password matches
+users.post('/login', async (req, res) => {
+    var username = req.body.username;
+	var password = req.body.password;
+    if (username && password) 
+    {
+        try
+        {
+         let queryResult=await DB.AuthUser(username);
+        
+                if(queryResult.length>0)
+                {
+                    if(password===queryResult[0].user_password)
+                    {
+                    req.session.user=queryResult;
+                    console.log(req.session.user)
+                     console.log(queryResult)
+                     console.log("SESSION VALID");
+                    
+                     //res.redirect('/');
+                    }
+                    else
+                    {
+                        console.log("INCORRECT PASSWORD");
+                    }
+                }else 
+                {
+                 console.log("USER NOT REGISTRED");   
+                }
+        }
+        catch(err){
+            console.log(err)
+            res.sendStatus(500)
+        }    
+    }
+    else
+    {
+        console.log("Please enter Username and Password!")
+    }
+    res.end();
+});
+
+//Inserts a new user in our database id field are complete
+users.post('/register', async (req, res) => {
+    
+    let username = req.body.username
+	let password = req.body.password
+    let email= req.body.email
+    if (username && password && email) 
+    {
+        try
+        {
+         let queryResult=await DB.AddUser(username,email,password);
+         if (queryResult.affectedRows) {
+            console.log("New user added!!")
+          }
+               
+        }
+        catch(err){
+            console.log(err)
+            res.sendStatus(500)
+        }    
+    }
+    else
+    {
+        console.log("A field is missing!")
+    }
+
+    res.end();
+
+    
+});
+
+module.exports=users
+```
+
+- Similarly to **novice.js** we import the required dependencies and modules.Then we write the logic for each route we define. In this case we want to consult: i) when user is trying to login and ii) when  he wants to register
+- For sure you noticed that in both files **novice.js** and **users.js** we are using the custom methods we created in **dbConn.js**. Also that we are using special keywords, such as: await and async.For now the only thing you need to know about them is that they are connected with the previously introduced *Promises*
+
+5. Save and run our server to check that everything works. 
+
+- You can use tools like [Postman](https://www.postman.com/) to send request to your server. 
+
+For now we have reached the end of our 1/3 tutorials. There are a few more thing to do in the back-end but we will finish them during the last tutorial. 
+
+Lastly, once you finish the coding, zip you project and submit it to e-classroom.
