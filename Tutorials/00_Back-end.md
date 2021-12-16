@@ -3,7 +3,7 @@
 
 ## MySQL
 
-At this point of the Lab sessions, I assume that you have experience using MySQL and phpMyAdmin. So We will skip that part and let you creat your own models.
+At this point of the Lab Sessions, I assume that you have experience using MySQL and phpMyAdmin. So We will skip that part and let you creat your own models.
 As the intention of these set of tutorials is to replicate the funcionality of your ***codeigniter project*** we will consume the your existing DB but we will create our own CRUD operations using NodeJS and ExpressJS.
 
 ## NodeJS
@@ -25,7 +25,7 @@ As the intention of these set of tutorials is to replicate the funcionality of y
 
 2. Inside the folder create an empty document (name does not matter) SimpleServer.js (the extension is important)
 
-3. Open SimpleServer.js whit your favorite IDE
+3. Open SimpleServer.js with your favorite IDE
 
 4. In the first line of the document simply write
 
@@ -243,7 +243,7 @@ app.use('/novice', novice);
 
 ```console
 node path/to/your/index.js
-```ºº
+```
 
 9. In the browser visit *http://ADDRESS:5000/*
 
@@ -360,7 +360,7 @@ dataPool.creteNovica=(title,slug,text)=>{
 - The returned data is callback from a given function. In this case the function is returning a *[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)*.
 - As you may noticed, the *Promise* is a function that will return either an error if the request failed or a resloution if data query was fullfiled.
 - What is the data that needs to be resolved or return as error? The one we are requestin in the *conn.query()*
-- Data in between quotes looks familiar? It's because this is the SQL instruction that you learned how to use some lab session behind. 
+- Data in between quotes looks familiar? It's because this is the SQL instruction that you learned how to use some Lab Session behind. 
 - To keep things short I have also implemented a request for a single new *oneNovica* that it's pretty similar to the first function but I have included and identifier to overload the request.
 - The last function *createNovica* follows a similar structure to *oneNoica* but receives 3 parameters instead. This is because we defined our database to autoincrement the id counter everytime a new article is inserted. 
 - Analyse previouse code and keep it in mind just in case you need to implement something similar later on ;)
@@ -449,7 +449,7 @@ novice.post('/', async (req,res, next)=>{
 }) 
 module.exports=novice
 ```
-- Observe than the first two routes are using get and the last one the post method. I hope you still rremember your previous lab sessions :)
+- Observe than the first two routes are using get and the last one the post method. I hope you still rremember your previous Lab Sessions :)
 - All the request need to be revised before invoke the methods we created to consult the database.
 - try and catch are gonna help us in this case break the application if something goes worng during running time. Let's do the proper for users.
 4. Create a new file  in **routes** folder and name it **users.js** then copy and paste the following code:
