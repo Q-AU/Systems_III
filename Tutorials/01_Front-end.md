@@ -433,7 +433,7 @@ constructor(props)
 <button onClick={()=>this.QSentUserToParent()} style={{margin:"10px"}}  className="btn btn-primary bt">Submit</button>
 ```
 
-- Repeat step 9 and 10 for ***SingleNovicaView*** but change the default *user.type* to *login*
+- Repeat step 9 and 10 for ***LoginView*** but change the default *user.type* to *login*
 
 10. Save and reload.
 
