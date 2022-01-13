@@ -235,16 +235,249 @@ let novica= this.state.novica
 10. Well done!! We are able to retrieve one single new from our list of news. 
 
 
-##TODO 
-
 #### Add news
+
+1. Open ***AddNovicaView.js*** and import axios
+2. Add a constructor and define a property named **novica** of type object into the local state.
+```javascript
+constructor(props){
+  super(props)
+  this.state={
+    novica:{}
+  }
+}
+```
+3. Add to everyinput tag the atttribute name and assign the corresponding value, for example:
+```javascript
+<input name="title" type="text" class="form-control"  placeholder="Title..."/>
+```
+
+4. Create a method that gets the text from each input field and stores the current value in the local state.
+```javascript
+QGetTextFromField=(e)=>{
+    this.setState(prevState=>({
+        novica:{...prevState.novica,[e.target.name]:e.target.value}
+        }))
+    }
+```
+- We could actually create an independent method for each input element
+- But this approach is more generic and reduces the code complexity
+
+5. Add the prop on change to each input elememnt in out JSX
+```javascript
+<input name="title" onChange={(e)=>this.QGetTextFromField(e)}
+ type="text" class="form-control"  placeholder="Title..."/>
+```
+- Now we are able to get the content of each field
+6. Create a method that every time user click the button *Submit*, it posts the content of the local state to the data base.
+
+```javascript
+QPostNovica=()=>{
+  axios.post('/novice',{
+    title:this.state.novica.title,
+    slug:this.state.novica.slug,
+    text:this.state.novica.text
+  })
+  .then(response=>{
+    console.log("Sent to server...")
+  })
+  .catch(err=>{
+    console.log(err)
+  })
+}
+```
+7. Add the newly created method the button element from out JSX
+```javascript
+<button onClick={()=>this.QPostNovica()} className="btn btn-primary bt" style={{margin:"10px"}}>Send</button>
+```
+- If you pay attention, it would be much beterr to implement the logic to check if the data that is intended to be submitted is complete or not in the client side.
+- Let's follow a simliar approach in Signup and Login views
+
 #### Sign in
-#### Login
-#### Using cookies and express-sessino
+1. Open ***SignupView.js*** and import axios
+2. Add a constructor and define a property named **user** of type object into the local state
+```javascript
+ constructor(props)
+    {
+        super(props);
+        this.state={
+            user:{
+                type:"signup"
+            }
+        }
+    }
+```
+3. Add to everyinput tag the atttribute name and assign the corresponding value, for example:
+```javascript
+<input name="username" type="text" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"/>
+```
+
+4. Create a method that gets the text from each input field and stores the current value in the local state.
+```javascript
+QGetTextFromField=(e)=>{
+    this.setState(prevState=>({
+        user:{...prevState.user,[e.target.name]:e.target.value}
+        }))
+    }
+```
+- Looks similar to somethign we did before?
+5. Add the prop on change to each input elememnt in out JSX
+
+```javascript
+<input onChange={(e)=>this.QGetTextFromField(e)} name="username" type="text" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"/>
+```
+- Now we are able to get the content of each field
+6. Create a method that every time user click the button *Submit/Send*, it posts the content of the local state to the data base.
+
+```javascript
+QPostSignup=()=>{
+  axios.post('/users/register',{
+    username:this.state.user.username,
+    email:this.state.user.email,
+    password:this.state.user.password
+  })
+  .then(response=>{
+    console.log("Sent to server...")
+  })
+  .catch(err=>{
+    console.log(err)
+  })
+}
+```
+7. Add the newly created method the button element from out JSX
+```javascript
+<button onClick={()=>this.QPostSignup()} className="btn btn-primary bt" style={{margin:"10px"}}>Send</button>
+```
+- Same case as before, it woul be a nice idea to revise the data in teh client side before submit it
+
+#### Using cookies and express-session
+ For login, we have to repeat same step 1-7 from previous views(AddNovicaView and SignupView). But as yo might notice, if we refresh the browser our session will expire, but moreover non of the other react components know tha we are logged in the app. To solve this issue let's:
+
+ 1. In the server side install:
+ ```console
+npm install cookie-parser express-session
+```
+2. Import the cookie-parser in the ***index.js*** from our server and define the default settings
+ ```javascript
+const cookieParser=require("cookie-parser")
+
+app.use(express.urlencoded({extended : true}));
+app.use(cookieParser("somesecret"))
+ ```
+
+3. Go to ***users.js*** and import express-session and the define the following settings:
+server and define the default settings
+ ```javascript
+const session = require("express-session")
+
+
+users.use(session({
+  secret:"somesecret",
+  resave:false, 
+  saveUninitialized:false,
+  cookies:{
+      expires:60*2
+  }
+
+}))
+ ```
+
+4. Create a new endpoint get for login and insert the follwing logic
+ ```javascript
+
+users.get('/login',(req,res)=>{
+   if(req.session.user) 
+   {
+   res.send({
+        logged:true,
+        user:req.session.user
+    })
+
+   }
+   else
+   {
+       res.send({logged:false})
+   }
+})
+ ```
+
+5. In client-side, open **app.js** and using *componentDidMount()* in-built function make a call to the new enpoint, so we get inforamtion about wheter the user is logged or not. 
+ ```javascript
+componentDidMount(){
+  axios.get('/users/login')
+  .then(response=>{
+    console.log(response)
+  })
+}
+ ```
+
+
+
+6. In ***LoginView.js*** update the post response so the user data can be caught by the **app.js***
+```javascript
+   QPostLogin=()=>{
+        axios.post('/users/login',{
+          username:this.state.user.username,
+          password:this.state.user.password
+        },{withCredentials:true})
+        .then(response=>{
+          console.log("Sent to server...")
+          this.QSendUser2Parent(response.data[0])
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+      }
+```
+
+7. Implement the following method to pass the object the response to the parent
+```javascript
+ QSendUser2Parent=(obj)=>{
+    this.props.QUserFromChild(obj)
+  } 
+
+```
+
+8. In ***App.js*** add the corresponding prop to *LogingView* component to receive the call back and set in the local state the user status.
+
+```javascript
+<LoginView QUserFromChild={this.QSetUser}/>
+```
+9. Create the method to set the local state, so we dont need to refresh the page:
+ ```javascript
+QSetUser=(obj)=>{
+  this.setState({
+    userStatus:{logged:true,user:[obj]}
+  })
+}
+```
+- we are customizing our response so it matches with the one we defined in the server side
+
+10. In componentDidMouth method update make get call to our api to check if we are logged. 
+ ```javascript
+componentDidMount(){
+  axios.get('/users/login')
+  .then(response=>{
+    console.log(response)
+    this.setState({userStatus:response.data})
+
+  })
+}
+ ```
+ - componentDidMoint is called just once at the beginign of the render, so this will be helpful is someone refreshes the page
+
+
+11. For you to practice...
+- Once logged in, change the view  to AddNovicaView
+- Make a conditional render for a logout button ang logout the session
 
 
 
 
-If you are reading this line, let me congratulate you. You have finifh our set of tutorial. Thank you for following me these weeks. 
 
-See you around!!
+Finally, if you are reading this last lines, let me congratulate you. You have finished our set of tutorials. Thank you for following me these weeks. 
+
+See you around!! and don't forget to submit.
+- *There will be extra poitn for those who manage to complete step 11 of this las section.*
+- *Be aware that our project  is not ready for production,  there a few more steps to implement in order to achieve this.*
+
