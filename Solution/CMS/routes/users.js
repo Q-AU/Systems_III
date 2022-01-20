@@ -3,7 +3,25 @@ const users= express.Router()
 
 const DB=require('../DB/dbConn')
 
-users.post('/login',async(req, res)=>{
+//Session test
+users.get('/login',async(req,res, next)=>{
+    console.log(req.session)
+    if(req.session.user)
+    {
+        res.send({
+            logged:true,
+            user:req.session.user
+        }) 
+    }
+    else
+    {
+        res.send({logged:false})
+    }
+    next()
+})
+
+users.post('/login',async(req, res, next)=>{
+    console.log(req.sessionID)
     let username=req.body.username
     let password=req.body.password
 
@@ -15,9 +33,13 @@ users.post('/login',async(req, res)=>{
             if(queryResult.length>0)
             {
                 if(password===queryResult[0].user_password)
-                {
-                     console.log(queryResult)
-                     console.log("SESSION VALID")
+                {   
+                    req.session.user=queryResult[0]
+                    req.session.save((err)=>{
+                        console.log(err)
+                    })
+                    res.send(req.session)
+                     console.log("SESSION VALID")  
                 }
                 else 
                 {
@@ -41,7 +63,11 @@ users.post('/login',async(req, res)=>{
     {
         console.log("Please enter an username and password")
     }
+   next()
 })
+
+
+
 //Add user to db
 users.post('/register',async(req,res)=>{
     let username=req.body.username
@@ -57,6 +83,7 @@ users.post('/register',async(req,res)=>{
             if(queryResult.affectedRows)
             {
                 console.log("New user added")
+                res.send("hola")
             }
         }
         catch (e)

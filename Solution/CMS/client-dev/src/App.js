@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios'
 //My custom components
 import HomeView from './CustomComponents/HomeView'
 import AboutView from './CustomComponents/AboutView'
@@ -8,13 +9,17 @@ import NoviceView from './CustomComponents/NoviceView'
 import SignupView from './CustomComponents/SignupView'
 import SingleNovicaView from './CustomComponents/SingleNovicaView'
 
+axios.defaults.withCredentials=true;
+
 
 class App extends React.Component
 {
   constructor(props){
     super(props)
     this.state={
-      CurrentPage:"home"
+      CurrentPage:"home",
+      Novica:1,
+      userStatus:{logged:false}
     }
   }
 
@@ -30,23 +35,38 @@ QGetView=(state)=>{
     case "novice":
       return <NoviceView QIDFromChild={this.QSetView}/>
     case "addnew":
-      return <AddNovicaView/>
+      return <AddNovicaView QUserName={state.userStatus.logged ? state.userStatus.user[0].user_name: "user"}/>
     case "signup":
       return <SignupView/>
     case "login":
-      return <LoginView/>
+      return <LoginView QSetViewinParent={this.QSetView} QUserFromChild={this.QSetUser}/>
     case "novica":
-      return <SingleNovicaView QPageFromChild={this.QSetView} />
+      return <SingleNovicaView data={state.Novica} QPageFromChild={this.QSetView} />
     default:
       return <h1>I doesnt work</h1>
     
   }
 }
 
+QSetUser=(obj)=>{
+this.setState({
+  userStatus:{logged:true,user:[obj]}
+})
+}
+
+
 QSetView=(obj)=>
 {
   this.setState({
-    CurrentPage:obj.page
+    CurrentPage:obj.page,
+    Novica:obj.id||1
+  })
+}
+
+componentDidMount(){
+  axios.get('http://88.200.63.148:5001/login')
+  .then(response=>{
+    console.log(response)
   })
 }
 
