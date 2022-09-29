@@ -1,8 +1,10 @@
 # Systems_III
-Created with educational purposes
+*Created with educational purposes*
 
+Welcome to Systems 3. Frameworks. 
+The idea of this series of tutorials is to familiarize yourself with some web technologies that are widely use in modern web developement. Every week we will reveal new content (written tutorials) and the we will work with them during lab hours.
 
-In order to use this repo simply follow the content of each link. Every new lab session we will reveal a new link tha you will need to complete as part of you lab excersices and the submit to e-classroom
+Before continue, make sure that you have a github account and then make a pullrequest to this repo so you will have your own branch to work with.
 
 [00. Back-end](./Tutorials/00_Back-end.md)
 
